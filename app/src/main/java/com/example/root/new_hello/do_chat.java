@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,28 +28,44 @@ public class do_chat extends AppCompatActivity {
     private personal_chat_adapter pca = null;
     private String sender = "";
     private SharedPreferences sharedPreferences = null;
+    private ArrayList<String> message_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do_chat);
         if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            roll_num = extras.getString("roll_number");
             sharedPreferences = getSharedPreferences("user_info", MODE_PRIVATE);
-            sender = sharedPreferences.getString("roll_num", "none");
-            roll_num = savedInstanceState.getString("roll_num");
+            sender = sharedPreferences.getString("roll_number", "none");
             send_button = findViewById(R.id.send_button);
             tob_sent_msg = findViewById(R.id.new_msg);
-            pca = new personal_chat_adapter(this, 0, database.get(roll_num));
-            chat_list = findViewById(R.id.personal_chat);
+            message_list = database.get(roll_num);
+            if (message_list != null) {
+                pca = new personal_chat_adapter(this, 0, message_list);
+            } else {
+                Toast.makeText(this, "cry baby", Toast.LENGTH_SHORT).show();
+            }
+
+
+            chat_list = (ListView) findViewById(R.id.personal_chat);
+            if (chat_list != null)
             chat_list.setAdapter(pca);
+            else {
+                Toast.makeText(this, "chat_lst is null", Toast.LENGTH_SHORT).show();
+            }
             send_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //get text and send and add to current chat and update view or the view gets automatically updated.
                     String msg = tob_sent_msg.getText().toString();
-                    send_and_save(roll_num, msg);
-                    pca.notifyDataSetChanged();
-                    tob_sent_msg.setText("");
+                    if (msg.length() > 0) {
+                        send_and_save(roll_num, msg);
+                        pca.notifyDataSetChanged();
+                        tob_sent_msg.setText("");
+                    }
+
                 }
             });
         }
@@ -83,20 +100,9 @@ public class do_chat extends AppCompatActivity {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.chat_send, parent, false);
             }
 
-            final String r_no = (String) getItem(position);
-            TextView name_a = (TextView) convertView.findViewById(R.id.name_acl);
-            name_a.setText(r_no);
-            name_a.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent ms = new Intent(getContext(), do_chat.class);
-                    ms.putExtra("roll_number", r_no);
-                    startActivity(ms);
-
-                }
-            });
-
-
+            final String message_itr = (String) getItem(position);
+            TextView name_a = (TextView) convertView.findViewById(R.id.send_bubble);
+            name_a.setText(message_itr);
             return convertView;
         }
 

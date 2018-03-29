@@ -230,9 +230,13 @@ public class main_screen extends AppCompatActivity {
                         int num = wrapped.getInt();
                         if (num > 5000 && num < 6000) {
                             //its a status message
+                            //catch all the control messages here and leave the single user message
+                            //keep flowing.
                         }
+                        num = num - (num / 1000) * 1000;
                         if (num > 1024) {
                             Log.e("my", "main_screen len > 1024");
+                            return;
                         }
                         buffer = new byte[num];
                         read_status = din.read(buffer);
@@ -243,6 +247,7 @@ public class main_screen extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     //listener.onMessageGenerated(finalMessage);
+                                    //messge will be of type sender:message
                                     update_text(finalMessage);
                                 }
                             });
@@ -304,8 +309,12 @@ public class main_screen extends AppCompatActivity {
     public void update_text(String message) {
         //this is pared messaage slice it for further usage
         //add message to db and update it on layout;
+//        String sender = message.substring(4, 11);
+//        String me = message.substring(11, 22);
+//        String actual_msg = message.substring(22);
+//        Log.e("me", sender+" sender");
+//    Log.e("me", actual_msg+" ac_msg");
         String sender = message.substring(0, 11);
-        String me = message.substring();
         String actual_msg = message.substring(12);
 
 
