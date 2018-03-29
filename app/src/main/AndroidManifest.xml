@@ -28,7 +28,7 @@
             android:name=".main_screen"
             android:label="My Campus Connect"
             android:theme="@style/AppTheme" />
-        <activity android:name=".do_chat"></activity>
+        <activity android:name=".do_chat" />
     </application>
 
 </manifest>

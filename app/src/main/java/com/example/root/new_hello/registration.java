@@ -43,7 +43,7 @@ public class registration extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         ip = extras.getString("ip");
         port = extras.getInt("port");
-        roll_num = sharedpref.getString("roll_num", "02914802714");//delete this line after debugging
+        roll_num = sharedpref.getString("roll_num", "none");//delete this line after debugging
         boolean Prerigistered = sharedpref.getBoolean("preregistered", false);
 
         if (Prerigistered) {

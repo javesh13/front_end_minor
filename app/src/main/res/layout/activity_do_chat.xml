@@ -9,6 +9,7 @@
     android:weightSum="10">
 
     <ListView
+        android:id="@+id/personal_chat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="9" />
@@ -24,7 +25,8 @@
             android:id="@+id/new_msg"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:layout_weight="9" />
+            android:layout_weight="9"
+            android:paddingStart="20dp" />
 
         <Button
             android:id="@+id/send_button"

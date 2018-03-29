@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -19,7 +20,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class main_screen extends AppCompatActivity {
 
@@ -39,6 +43,9 @@ public class main_screen extends AppCompatActivity {
     private static boolean receiving_messages = true;
     static Check_for_message cfm;
     static Receive_message rm;
+    public static ArrayList<String> active_chats;
+    public static HashMap<String, ArrayList<String>> database;
+    public static AtomicReference<String> message_to_be_sent;
 
 
     @Override
@@ -46,15 +53,8 @@ public class main_screen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
         if (savedInstanceState == null) {
-            assignment_obj = new assignment();
-            chat_obj = new chat();
-            chat_obj.setActivityContext(this);
-            home_tab_obj = new home_tab();
-            sharedpref = getSharedPreferences("user_info", Context.MODE_PRIVATE);
-            roll_number = sharedpref.getString("roll_number", "02914802714");
-            Bundle extras = getIntent().getExtras();
-            ip = extras.getString("ip");
-            port = extras.getInt("port");
+            initialize_static_members();
+            message_to_be_sent = new AtomicReference<String>("");
             setTitle(roll_number);
             try {
                 s = initialize_socket(s);
@@ -64,7 +64,7 @@ public class main_screen extends AppCompatActivity {
             checking_for_messages = false;
             receiving_messages = false;
             cfm = new Check_for_message(s, ip, port);
-            rm = new Receive_message(s, ip, port, chat_obj);
+            rm = new Receive_message(s, ip, port);
         }
 
         if (!checking_for_messages) {
@@ -103,13 +103,14 @@ public class main_screen extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
     }
+
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -169,8 +170,17 @@ public class main_screen extends AppCompatActivity {
                 dout = s.getOutputStream();
                 while (true) {
                     String command = "qz1004," + roll_number + ",jk";
-                    byte[] buffer = command.getBytes();
-                    dout.write(buffer);
+                    if (message_to_be_sent.get() == "") {
+                        byte[] buffer = command.getBytes();
+                        dout.write(buffer);
+                    } else {
+                        byte[] buffer = message_to_be_sent.get().getBytes();
+                        dout.write(buffer);
+                        message_to_be_sent.set("");
+                    }
+                    //make this sleep dynamic if there is no response from the server.
+                    //by dynamic i mean if there is no response from the server then increase the
+                    //sleep time. this will help is battery saving and less network traffic.
                     TimeUnit.SECONDS.sleep(2);
 
                 }
@@ -180,28 +190,37 @@ public class main_screen extends AppCompatActivity {
         }
     }
 
+    public interface onMessageUpdateListener {
+
+        public void onMessageGenerated(String message);
+    }
+
+    static onMessageUpdateListener listener;
+
+    public static void setOnMessageUpdateListener(onMessageUpdateListener listener1) {
+        listener = listener1;
+    }
+
     public class Receive_message implements Runnable {
         private final Socket s;
         private final String ip;
         private final int port;
         InputStream din = null;
         byte[] buffer;
-        private chat co = null;
         private View v;
 
-        Receive_message(Socket s, String ip, int port, chat co) {
+        Receive_message(Socket s, String ip, int port) {
             this.s = s;
             this.ip = ip;
             this.port = port;
             buffer = new byte[1024];
-            this.co = co;
         }
 
         @Override
         public void run() {
             try {
                 din = s.getInputStream();
-                co.update_text("hello");
+                //listener.onMessageGenerated
                 String message = null;
                 while (true) {
                     byte[] buffer = new byte[4];
@@ -209,6 +228,9 @@ public class main_screen extends AppCompatActivity {
                     if (read_status != -1) {
                         ByteBuffer wrapped = ByteBuffer.wrap(buffer); // big-endian by default
                         int num = wrapped.getInt();
+                        if (num > 5000 && num < 6000) {
+                            //its a status message
+                        }
                         if (num > 1024) {
                             Log.e("my", "main_screen len > 1024");
                         }
@@ -220,7 +242,8 @@ public class main_screen extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    co.update_text(finalMessage);
+                                    //listener.onMessageGenerated(finalMessage);
+                                    update_text(finalMessage);
                                 }
                             });
 
@@ -259,4 +282,48 @@ public class main_screen extends AppCompatActivity {
     public void start_receive() {
         new Thread(rm).start();
     }
+
+    void add_message_db(String sender, String message) {
+        int position = -1;
+        position = active_chats.indexOf(sender);
+        if (position == -1) {
+            //create active chat and then add message to corresponding chat.
+            active_chats.add(sender);
+            database.put(sender, new ArrayList<String>());
+            chat_obj.update_text();
+            if (message != "")
+                database.get(sender).add(message);
+
+        } else {
+            // add message to cooresponding chat in hashmap.
+            if (message != "")
+                database.get(sender).add(message);
+        }
+    }
+
+    public void update_text(String message) {
+        //this is pared messaage slice it for further usage
+        //add message to db and update it on layout;
+        String sender = message.substring(0, 11);
+        String me = message.substring();
+        String actual_msg = message.substring(12);
+
+
+        //call the function to actually send the message
+        add_message_db(sender, actual_msg);
+    }
+
+    void initialize_static_members() {
+        assignment_obj = new assignment();
+        chat_obj = new chat();
+        home_tab_obj = new home_tab();
+        sharedpref = getSharedPreferences("user_info", Context.MODE_PRIVATE);
+        roll_number = sharedpref.getString("roll_number", "02914802714");
+        Bundle extras = getIntent().getExtras();
+        ip = extras.getString("ip");
+        port = extras.getInt("port");
+        active_chats = new ArrayList<String>();
+        database = new HashMap<String, ArrayList<String>>();
+    }
+
 }
