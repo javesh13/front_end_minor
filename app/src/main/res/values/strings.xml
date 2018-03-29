@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">new_hello</string>
+    <string name="title_activity_registration">Sign Up</string>
+    <string name="tab_text_1">Assignments</string>
+    <string name="tab_text_2">Main</string>
+    <string name="tab_text_3">Chat</string>
+    <string name="Dummy"> Dummy</string>
+
+</resources>

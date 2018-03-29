@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.AlertDialogLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="120dp"
+    android:layout_width="300dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true">
+
+    <EditText
+        android:id="@+id/new_chat_box"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:textAlignment="center"
+        android:focusedByDefault="true" />
+
+    <Button
+        android:id="@+id/add_chat_btn"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="80dp"
+        android:text="Add" />
+
+
+</android.support.v7.widget.AlertDialogLayout>

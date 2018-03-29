@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.root.new_hello.MainActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:isScrollContainer="true"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:gravity="top|center"
+            android:isScrollContainer="true"
+            android:orientation="vertical"
+            android:scrollIndicators="left|right">
+
+            <EditText
+                android:id="@+id/ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_centerHorizontal="false"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="50dp"
+                android:background="@android:color/background_light"
+                android:contextClickable="false"
+                android:defaultFocusHighlightEnabled="true"
+                android:editable="true"
+                android:ems="10"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:hint="Server Ip Address"
+                android:inputType="phone"
+                android:singleLine="false"
+                tools:layout_editor_absoluteX="50dp"
+                tools:layout_editor_absoluteY="100dp" />
+
+            <EditText
+                android:id="@+id/port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_centerHorizontal="false"
+                android:layout_marginBottom="80dp"
+                android:layout_marginTop="0dp"
+                android:background="@android:color/background_light"
+                android:contextClickable="false"
+                android:defaultFocusHighlightEnabled="true"
+                android:editable="true"
+                android:ems="10"
+                android:gravity="center_vertical|center_horizontal|center"
+                android:hint="Server Port"
+                android:inputType="phone"
+                android:singleLine="false"
+                tools:layout_editor_absoluteX="50dp"
+                tools:layout_editor_absoluteY="100dp" />
+
+            <Button
+                android:id="@+id/connect_to_server"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="Connect" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
