@@ -1,0 +1,4 @@
+#Tue Mar 27 15:03:53 IST 2018
+base.0=/home/me/iDE_Projects/Android_Studio/new_hello/app/build/intermediates/transforms/dexMerger/debug/4
+renamed.0=classes.dex
+file.0=/home/me/iDE_Projects/Android_Studio/new_hello/app/build/intermediates/transforms/dexMerger/debug/4/classes.dex

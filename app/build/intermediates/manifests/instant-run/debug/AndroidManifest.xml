@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.root.new_hello"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="26" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <application
+        android:allowBackup="true"
+        android:debuggable="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="Connect To Server"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:testOnly="true"
+        android:theme="@style/AppTheme" >
+        <activity android:name="com.example.root.new_hello.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.root.new_hello.registration"
+            android:label="@string/title_activity_registration"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.example.root.new_hello.main_screen"
+            android:label="My Campus Connect"
+            android:theme="@style/AppTheme" />
+        <activity android:name="com.example.root.new_hello.do_chat" />
+
+        <meta-data
+            android:name="android.support.VERSION"
+            android:value="26.1.0" />
+        <meta-data
+            android:name="android.arch.persistence.room.rxjava2.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+        <meta-data
+            android:name="android.arch.persistence.room.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+        <meta-data
+            android:name="android.arch.persistence.db.framework.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+        <meta-data
+            android:name="android.arch.persistence.db.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+        <meta-data
+            android:name="android.arch.core.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+        <meta-data
+            android:name="android.arch.lifecycle.VERSION"
+            android:value="27.0.0-SNAPSHOT" />
+
+        <provider
+            android:name="com.android.tools.ir.server.InstantRunContentProvider"
+            android:authorities="com.example.root.new_hello.com.android.tools.ir.server.InstantRunContentProvider"
+            android:multiprocess="true" />
+    </application>
+
+</manifest>
